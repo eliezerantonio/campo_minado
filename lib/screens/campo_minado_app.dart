@@ -14,6 +14,8 @@ class CampoMinadoApp extends StatefulWidget {
 }
 
 class _CampoMinadoAppState extends State<CampoMinadoApp> {
+  bool _venceu;
+  Tabuleiro _tabuleiro = Tabuleiro(linhas: 8, colunas: 12, qtdBombas: 3);
   void _reiniciar() {
     print('Reiniciar...');
   }
@@ -31,11 +33,11 @@ class _CampoMinadoAppState extends State<CampoMinadoApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: ResultadoWidget(
-          venceu: true,
+          venceu: _venceu,
           onReiniciar: _reiniciar,
         ),
         body: TabuleiroWidget(
-            tabuleiro: Tabuleiro(linhas: 8, colunas: 15, qtdBombas: 10),
+            tabuleiro: _tabuleiro,
             onAbrir: _abrir,
             onAlternarMarcacao: _alternarMarcacao),
       ),
