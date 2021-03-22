@@ -15,17 +15,53 @@ class CampoMinadoApp extends StatefulWidget {
 
 class _CampoMinadoAppState extends State<CampoMinadoApp> {
   bool _venceu;
-  Tabuleiro _tabuleiro = Tabuleiro(linhas: 8, colunas: 12, qtdBombas: 3);
+  Tabuleiro _tabuleiro;
   void _reiniciar() {
-    print('Reiniciar...');
+    setState(() {
+      _venceu = null;
+      _tabuleiro.reiniciar();
+    });
   }
 
   void _abrir(Campo campo) {
-    print("abrir");
+    if (_venceu != null) {
+      return;
+    }
+    setState(() {
+      try {
+        campo.abrir();
+        if (_tabuleiro.resolvido) {
+          _venceu = true;
+        }
+      } on ExplosaoException {
+        _venceu = false;
+        _tabuleiro.revelarBomas();
+      }
+    });
   }
 
   void _alternarMarcacao(Campo campo) {
-    print("marcacao");
+    if (_venceu != null) {
+      return;
+    }
+    setState(() {
+      campo.alternarMarcacao();
+      if (_tabuleiro.resolvido) {
+        _venceu = true;
+      }
+    });
+  }
+
+  Tabuleiro _getTabuleiro(double largura, double altura) {
+    if (_tabuleiro == null) {
+      int qtdColunas = 15;
+      double tamanhoCampo = largura = largura / qtdColunas;
+
+      int qtdLinhas = (altura / tamanhoCampo).floor();
+
+      _tabuleiro =
+          Tabuleiro(linhas: qtdLinhas, colunas: qtdColunas, qtdBombas: 77);
+    }
   }
 
   @override
@@ -36,10 +72,16 @@ class _CampoMinadoAppState extends State<CampoMinadoApp> {
           venceu: _venceu,
           onReiniciar: _reiniciar,
         ),
-        body: TabuleiroWidget(
-            tabuleiro: _tabuleiro,
-            onAbrir: _abrir,
-            onAlternarMarcacao: _alternarMarcacao),
+        body: Container(
+          color: Colors.grey,
+          child: LayoutBuilder(builder: (context, constraints) {
+            return TabuleiroWidget(
+                tabuleiro:
+                    _getTabuleiro(constraints.maxWidth, constraints.maxHeight),
+                onAbrir: _abrir,
+                onAlternarMarcacao: _alternarMarcacao);
+          }),
+        ),
       ),
     );
   }
