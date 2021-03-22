@@ -62,6 +62,7 @@ class _CampoMinadoAppState extends State<CampoMinadoApp> {
       _tabuleiro =
           Tabuleiro(linhas: qtdLinhas, colunas: qtdColunas, qtdBombas: 77);
     }
+    return _tabuleiro;
   }
 
   @override
