@@ -17,15 +17,39 @@ class _CampoMinadoAppState extends State<CampoMinadoApp> {
   bool _venceu;
   Tabuleiro _tabuleiro = Tabuleiro(linhas: 8, colunas: 12, qtdBombas: 3);
   void _reiniciar() {
-    print('Reiniciar...');
+    setState(() {
+      _venceu = null;
+      _tabuleiro.reiniciar();
+    });
   }
 
   void _abrir(Campo campo) {
-    print("abrir");
+    if (_venceu != null) {
+      return;
+    }
+    setState(() {
+      try {
+        campo.abrir();
+        if (_tabuleiro.resolvido) {
+          _venceu = true;
+        }
+      } on ExplosaoException {
+        _venceu = false;
+        _tabuleiro.revelarBomas();
+      }
+    });
   }
 
   void _alternarMarcacao(Campo campo) {
-    print("marcacao");
+    if (_venceu != null) {
+      return;
+    }
+    setState(() {
+      campo.alternarMarcacao();
+      if (_tabuleiro.resolvido) {
+        _venceu = true;
+      }
+    });
   }
 
   @override
